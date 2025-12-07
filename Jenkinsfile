@@ -2,41 +2,34 @@ pipeline {
     agent any
 
     environment {
-        SLACK_WEBHOOK = credentials("slack-webhook")
+        SLACK_WEBHOOK = credentials("slack-webhook")    
         SITE_URL = "https://gallery-1-628g.onrender.com/"
         RENDER_HOOK = "https://api.render.com/deploy/srv-cugv5t08ph6s73fb7prg?key=j77miZzMSsM"
     }
 
     stages {
+
         stage("Clone repository") {
             steps {
                 git branch: "master", url: "https://github.com/mainlymwaura/gallery.git"
             }
         }
 
-        stage("Ensure Node & Install dependencies") {
+        stage("Install dependencies") {
             steps {
-                sh """
-                # Install Node if not present (optional, if your agent lacks Node)
-                if ! command -v node > /dev/null; then
-                  curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-                  sudo apt-get install -y nodejs
-                fi
-                npm install
-                """
+                sh "npm install"
             }
         }
 
-       stage("Run tests") {
+        stage("Run tests") {
             steps {
-               sh "echo 'Skipping tests for now'"
+                sh "echo 'Skipping tests for now'"
             }
         }
-        
+
         stage("Build") {
             steps {
                 sh "npm run build"
-
             }
         }
 
