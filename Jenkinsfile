@@ -4,7 +4,8 @@ pipeline {
     environment {
         SLACK_WEBHOOK = credentials("slack-webhook")    
         SITE_URL = "https://gallery-1-628g.onrender.com/"
-        RENDER_HOOK = "https://api.render.com/deploy/srv-cugv5t08ph6s73fb7prg?key=j77miZzMSsM"
+        RENDER_API_KEY = credentials("https://api.render.com/deploy/srv-d4m508uuk2gs738o4670?key=xzdXN8ki2JE")
+        SERVICE_ID = "srv-d4m508uuk2gs738o4670"
     }
 
     stages {
@@ -36,9 +37,10 @@ pipeline {
         stage("Deploy to Render") {
             steps {
                 sh """
-                curl -X POST -H 'Content-Type: application/json' \
-                  -d '{ "trigger": "jenkins" }' \
-                  "$RENDER_HOOK"
+                curl -X POST "https://api.render.com/v1/services/${SERVICE_ID}/deploys" \
+                  -H "Authorization: Bearer ${RENDER_API_KEY}" \
+                  -H "Content-Type: application/json" \
+                  -d '{}'
                 """
             }
         }
