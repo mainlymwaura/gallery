@@ -15,34 +15,57 @@ pipeline {
                 git branch: "master", url: "https://github.com/mainlymwaura/gallery.git"
             }
         }
-       stage("Install Node") {
+
+        stage('Install Node') {
             steps {
-                    sh """
-                    curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-                    sudo apt-get install -y nodejs
-                    node -v
-                    npm -v
-                    """
+              sh '''
+        
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh
+            nvm install 18
+            nvm use 18
+            node -v
+            npm -v
+        '''
+
+        }
     }
-}
 
-        stage("Install dependencies") {
+        stage('Install dependencies') {
             steps {
-                sh "npm install"
-            }
+              sh '''
+            export NVM_DIR="$HOME/.nvm"
+            . "$NVM_DIR/nvm.sh"
+            
+            nvm use 18
+            npm install
+        '''
         }
+    }
+       stage('Run tests') {
+            steps {
+                 sh '''
+            export NVM_DIR="$HOME/.nvm"
+            . "$NVM_DIR/nvm.sh"
+            
+            nvm use 18
+            npm test || true
+        '''
+        }
+    }
 
-        stage("Run tests") {
+       stage('Build') {
             steps {
-                sh "echo 'Skipping tests for now'"
-            }
+                sh '''
+            export NVM_DIR="$HOME/.nvm"
+            . "$NVM_DIR/nvm.sh"
+            
+            nvm use 18
+            npm run build
+        '''
         }
-
-        stage("Build") {
-            steps {
-                sh "npm run build"
-            }
-        }
+    }
 
         stage("Deploy to Render") {
             steps {
