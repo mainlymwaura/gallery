@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs "node16" 
+    }
+
     environment {
         SLACK_WEBHOOK = credentials("slack-webhook")    
         SITE_URL = "https://gallery-1-628g.onrender.com/"
